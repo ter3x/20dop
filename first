@@ -1,0 +1,76 @@
+#include <iostream>
+#include <fstream>
+#include <vector>
+#include <set>
+#include <locale>
+
+using namespace std;
+
+
+void dfs(int v, const vector<vector<bool>>& adjacency_matrix, set<int>& visited) {
+    visited.insert(v);  
+    for (int i = 0; i < adjacency_matrix.size(); i++) {
+        if (adjacency_matrix[v][i] && visited.find(i) == visited.end()) {
+            dfs(i, adjacency_matrix, visited);  
+        }
+    }
+}
+
+
+vector<vector<bool>> read_adjacency_matrix(ifstream& input_file, int& n) {
+    input_file >> n;
+    vector<vector<bool>> adjacency_matrix(n, vector<bool>(n, false));
+
+    
+    for (int i = 0; i < n; i++) {
+        for (int j = 0; j < n; j++) {
+            int has_edge;
+            input_file >> has_edge;
+            adjacency_matrix[i][j] = (has_edge != 0);
+        }
+    }
+
+    return adjacency_matrix;
+}
+
+
+void process_vertices(ofstream& output_file, const vector<vector<bool>>& adjacency_matrix, int n) {
+    for (int i = 0; i < n; i++) {
+        set<int> visited;  
+        dfs(i, adjacency_matrix, visited);  
+
+        output_file << "Вершина " << i << ": ";
+        cout << "Вершина " << i << ": ";  
+
+        for (const int vertex : visited) {
+            if (vertex != i) {  
+                output_file << vertex << " ";
+                cout << vertex << " ";  
+            }
+        }
+
+        output_file << endl;
+        cout << endl;  
+    }
+}
+
+
+int main() {
+    setlocale(LC_ALL, "rus");
+
+    
+    ifstream input_file("input.txt");
+    ofstream output_file("output.txt");
+
+    int n;  
+    vector<vector<bool>> adjacency_matrix = read_adjacency_matrix(input_file, n);  
+
+    process_vertices(output_file, adjacency_matrix, n);  
+
+
+    input_file.close();
+    output_file.close();
+
+    return 0;
+}
+
